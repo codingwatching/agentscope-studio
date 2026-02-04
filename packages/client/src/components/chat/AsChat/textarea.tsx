@@ -1,4 +1,4 @@
-import { memo, useRef, useState } from 'react';
+import { memo, useRef, useState, useEffect } from 'react';
 import {
     InputGroup,
     InputGroupAddon,
@@ -23,6 +23,9 @@ import {
     AttachItem,
 } from '@/components/chat/AsChat/attach.tsx';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area.tsx';
+import { useMessageApi } from '@/context/MessageApiContext';
+import VoiceButton from '@/components/buttons/VoiceButton';
+import { useSpeechRecognition } from '@/hooks/useSpeechRecognition';
 
 export interface AsTextareaProps {
     inputText?: string;
@@ -42,6 +45,7 @@ export interface AsTextareaProps {
         expandTextarea?: string;
         attachButton: string;
         sendButton: string;
+        voiceButton: string;
     };
     expandable?: boolean;
     attachAccept: string[];
@@ -72,7 +76,36 @@ const AsTextarea = ({
     const [internalAttachment, setInternalAttachment] = useState<AttachData[]>(
         [],
     );
+    const {
+        isListening,
+        startListening,
+        stopListening,
+        resetTranscript,
+        isSupported,
+        error,
+    } = useSpeechRecognition({
+        continuous: true,
+        interimResults: false,
+        onResult: (newText) => {
+            setInternalInputText((prev) => prev + newText + ' ');
+            if (externalInputText !== undefined) {
+                onChange?.(externalInputText + newText + ' ');
+            }
+        },
+    });
+    const { messageApi } = useMessageApi();
 
+    useEffect(() => {
+        if (error) messageApi.error(error);
+    }, [error, messageApi]);
+
+    const handleToggleVoice = () => {
+        if (isListening) {
+            stopListening();
+        } else {
+            startListening();
+        }
+    };
     const inputText = externalInputText ?? internalInputText;
     const handleChange = (text: string) => {
         if (externalInputText === undefined) {
@@ -122,6 +155,11 @@ const AsTextarea = ({
 
             // Clear the attachment
             handleAttachChange(() => []);
+
+            // stop speech recognition
+            stopListening();
+            // Reset the speech recognition transcript
+            resetTranscript();
         } else {
             onActionClick([], null);
         }
@@ -234,6 +272,17 @@ const AsTextarea = ({
                         </TooltipContent>
                     </Tooltip>
                 ) : null}
+                {isSupported && (
+                    <Tooltip>
+                        <TooltipTrigger>
+                            <VoiceButton
+                                isListening={isListening}
+                                onClick={handleToggleVoice}
+                            />
+                        </TooltipTrigger>
+                        <TooltipContent>{tooltips.voiceButton}</TooltipContent>
+                    </Tooltip>
+                )}
                 <Tooltip>
                     <TooltipTrigger>
                         <InputGroupButton
