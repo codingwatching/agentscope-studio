@@ -138,10 +138,15 @@ The solution/code to the user query may already exist in the AgentScope resource
     )
 
     path_dialog_history = get_local_file_path("")
-    session = JSONSession(
-        session_id=FRIDAY_SESSION_ID,
-        save_dir=path_dialog_history
-    )
+    try:
+        session = JSONSession(
+            save_dir=path_dialog_history
+        )
+    except TypeError:
+        session = JSONSession(
+            session_id=FRIDAY_SESSION_ID,
+            save_dir=path_dialog_history
+        )
 
     await session.load_session_state(
         session_id=FRIDAY_SESSION_ID,
