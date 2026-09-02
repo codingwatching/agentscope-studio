@@ -1,3 +1,11 @@
+> [!IMPORTANT]
+> ## Archive Notice
+>
+> AgentScope 2.0 now ships a built-in Web UI as part of its batteries-included Agent Service — a FastAPI backend paired with a pre-built frontend (`examples/web_ui`) for building, running and observing agents out of the box. Powered by a unified event stream, it visualizes agent reasoning, tool calls and multimodal content in real time, and offers multi-session isolation, Agent Team (leader–worker) orchestration with task planning, permission & human-in-the-loop control, IM channels (Feishu / Discord), MCP & Skill Hub management, session persistence and task scheduling.
+>
+> With these capabilities built natively into AgentScope 2.0, AgentScope Studio is no longer maintained as a standalone tool. We recommend all users migrate to AgentScope 2.0 (https://github.com/agentscope-ai/agentscope) for continued updates, new features and community support. This repository will remain available in read-only mode for reference and will be archived soon.
+>
+> Thank you to everyone who contributed to and used AgentScope Studio!
 <p align="center">
   <img
     src="https://img.alicdn.com/imgextra/i1/O1CN01nTg6w21NqT5qFKH1u_!!6000000001621-55-tps-550-550.svg"
